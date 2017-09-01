@@ -107,7 +107,7 @@ def train(lmWithRNN, gateModel, args, trainData, validData):
         totalloss = 0
         finishnum = 0
         lr_decay = np.sqrt(epoch + 1)
-        opt.alpha /= lr_decay
+        opt.alpha = 0.001 / lr_decay
         print 'Learning rate: %.6f'%(opt.alpha)
         if lmWithRNN.modelType == 'RHN':
             prevHidden = [chainer.Variable(xp.zeros((args.batch, lmWithRNN.dim)).astype(np.float32)) for _ in range(lmWithRNN.layerNum)]
