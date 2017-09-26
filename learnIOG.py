@@ -186,11 +186,15 @@ if __name__ == '__main__':
         help='specify the setting file of trained language model')
     parser.add_argument('-m', '--model', dest='model', default='', required=True,
         help='specify the name of trained language model file')
+    parser.add_argument('--seed', dest='seed', default=0, type=int,
+        help='seed value')
     args = parser.parse_args()
     if args.gpu >= 0:
         cuda.check_cuda_available()
         cuda.get_device(args.gpu).use()
     xp = cuda.cupy if args.gpu >= 0 else np
+    np.random.seed(args.seed)
+    xp.random.seed(args.seed)
     main(args)
 
 
