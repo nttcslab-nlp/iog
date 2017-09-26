@@ -100,6 +100,8 @@ def train(lmWithRNN, gateModel, args, trainData, validData):
     opt = O.Adam(alpha=0.001)
     opt.setup(gateModel.gateModel)
     opt.add_hook(chainer.optimizer.GradientClipping(args.maxGrad))
+    if args.weightDecay > 0:
+        opt.add_hook(chainer.optimizer.WeightDecay(args.weightDecay))
     bestperp = np.inf
     for epoch in range(args.epoch):
         epochStart = time.time()
@@ -164,7 +166,7 @@ if __name__ == '__main__':
         help='validation data (.npz)')
     parser.add_argument('--output', dest='output', default='', required=True,
         help='output file name')
-    parser.add_argument('--maxGrad', dest='maxGrad', default=0.1, type=float,
+    parser.add_argument('--maxGrad', dest='maxGrad', default=1.0, type=float,
         help='max gradient norm')
     parser.add_argument('--step', dest='step', default=35, type=int,
         help='the number of steps to update parameters')
@@ -176,8 +178,10 @@ if __name__ == '__main__':
         help='the number of dimensions')
     parser.add_argument('-b', '--batch', dest='batch', default=20, type=int,
         help='batch size')
-    parser.add_argument('--scale', dest='scale', default=0.01, type=float,
+    parser.add_argument('--scale', dest='scale', default=0.05, type=float,
         help='scale value for initialization')
+    parser.add_argument('--weightDecay', dest='weightDecay', default=1e-6, type=float,
+        help='weight decay')
     parser.add_argument('-s', '--setting', dest='setting', default='', required=True,
         help='specify the setting file of trained language model')
     parser.add_argument('-m', '--model', dest='model', default='', required=True,
@@ -189,4 +193,13 @@ if __name__ == '__main__':
     xp = cuda.cupy if args.gpu >= 0 else np
     main(args)
 
+
+"""
+We recommend to use the default setting except for awd-lstm-lm.
+
+For awd-lstm-lm, we discovered the following setting is better:
+--maxGrad 0.1 \\
+--scale 0.01 \\
+--weightDecay 1e-6
+"""
 
