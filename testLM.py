@@ -98,11 +98,11 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-t', '--test', dest='test', default='',
-       help='specify the test data')
+       help='test data (.npz)')
     parser.add_argument('-g', '--gpu', dest='gpu', default=-1, type=int,
         help='GPU ID (negative value indicates CPU)')
     parser.add_argument('--cachesize', dest='cachesize', default=0, type=int,
-        help='specify the size of cache')
+        help='cache size')
     parser.add_argument('-s', '--setting', dest='setting', default='', required=True,
         help='specify the setting file of trained language model')
     parser.add_argument('-m', '--model', dest='model', default='', required=True,

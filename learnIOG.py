@@ -100,8 +100,7 @@ def train(lmWithRNN, gateModel, args, trainData, validData):
     opt = O.Adam(alpha=0.001)
     opt.setup(gateModel.gateModel)
     opt.add_hook(chainer.optimizer.GradientClipping(args.maxGrad))
-    prevvalidperp = np.inf
-    prevModel = None
+    bestperp = np.inf
     for epoch in range(args.epoch):
         epochStart = time.time()
         totalloss = 0
@@ -129,13 +128,10 @@ def train(lmWithRNN, gateModel, args, trainData, validData):
         sys.stderr.write('Train time is %s\tValid time is %s\n'%(epochEnd - epochStart, time.time() - epochEnd))
         sys.stdout.write('Epoch: %s\tTrain loss: %.6f\tValid loss: %.6f\tValid perplexity: %.6f\n'%(epoch, totalloss / finishnum, validloss, validperp))
         sys.stdout.flush()
-        if prevvalidperp < validperp:
-            gateOutputFile = args.output + '.epoch%s'%(epoch) + '.bin'
-            S.save_npz(gateOutputFile, prevModel)
-        prevModel = copy.deepcopy(gateModel.gateModel).to_cpu()
-        prevvalidperp = validperp
-    gateOutputFile = args.output + '.epoch%s_fin'%(epoch+1) + '.bin'
-    S.save_npz(gateOutputFile, prevModel)
+        if validperp < bestperp:
+            gateOutputFile = args.output + '.bin'
+            S.save_npz(gateOutputFile, copy.deepcopy(gateModel.gateModel).to_cpu())
+            bestperp = validperp
 
 
 def main(args):
@@ -162,26 +158,26 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-g', '--gpu', dest='gpu', default=-1, type=int,
         help='GPU ID (negative value indicates CPU)')
-    parser.add_argument('--train', dest='train', default='',
-        help='specify training file')
-    parser.add_argument('--valid', dest='valid', default='',
-        help='specify validation data')
-    parser.add_argument('--output', dest='output', default='',
-        help='specify output directory')
-    parser.add_argument('--maxGrad', dest='maxGrad', default=1, type=float,
-        help='specify the max gradient norm')
+    parser.add_argument('--train', dest='train', default='', required=True,
+        help='training data (.npz)')
+    parser.add_argument('--valid', dest='valid', default='', required=True,
+        help='validation data (.npz)')
+    parser.add_argument('--output', dest='output', default='', required=True,
+        help='output file name')
+    parser.add_argument('--maxGrad', dest='maxGrad', default=0.1, type=float,
+        help='max gradient norm')
     parser.add_argument('--step', dest='step', default=35, type=int,
-        help='specify the number of steps to update parameters')
+        help='the number of steps to update parameters')
     parser.add_argument('-e', '--epoch', dest='epoch', default=5, type=int,
-        help='specify the number of epoch')
+        help='the number of epoch')
     parser.add_argument('--dropout', dest='dropout', default=0.5, type=float,
-        help='specify the dropout rate')
+        help='dropout rate')
     parser.add_argument('-d', '--dim', dest='dim', default=300, type=int,
-        help='specify the IOG')
+        help='the number of dimensions')
     parser.add_argument('-b', '--batch', dest='batch', default=20, type=int,
-        help='specify the size of batch')
-    parser.add_argument('--scale', dest='scale', default=0.05, type=float,
-        help='specify the scale value for initialization')
+        help='batch size')
+    parser.add_argument('--scale', dest='scale', default=0.01, type=float,
+        help='scale value for initialization')
     parser.add_argument('-s', '--setting', dest='setting', default='', required=True,
         help='specify the setting file of trained language model')
     parser.add_argument('-m', '--model', dest='model', default='', required=True,
