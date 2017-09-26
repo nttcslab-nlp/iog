@@ -186,47 +186,47 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--vocab', dest='vocab', default='',
-        help='specify the name of file representing vocabulary')
+        help='vocabulary file constructed by utils.py')
     parser.add_argument('--train', dest='train', default='',
-        help='specify training file')
+        help='training data (.npz)')
     parser.add_argument('--valid', dest='valid', default='',
-        help='specify validation data')
-    parser.add_argument('--output', dest='output', default='',
-        help='specify output file name (in training)')
+        help='validation data (.npz)')
+    parser.add_argument('--output', dest='output', default='', required=True,
+        help='output file name')
     parser.add_argument('--scale', dest='scale', default=0.04, type=float,
-        help='specify the scale value for initialization')
+        help='scale value for initialization')
     parser.add_argument('--bias', dest='bias', default=-2.0, type=float,
-        help='specify the bias value')
+        help='initial bias value')
     parser.add_argument('--lr', dest='lr', default=0.2, type=float,
-        help='specify the initial learining rate')
+        help='initial learining rate')
     parser.add_argument('--maxGrad', dest='maxGrad', default=10, type=float,
-        help='specify the max gradient norm')
+        help='max gradient norm')
     parser.add_argument('--layer', dest='layerNum', default=1, type=int,
-        help='specify the number of RNN layers')
+        help='the number of RNN layers')
     parser.add_argument('--step', dest='step', default=35, type=int,
-        help='specify the number of steps to update parameters')
+        help='the number of steps to update parameters')
     parser.add_argument('-d', '--dim', dest='dim', default=890, type=int,
-        help='specify the number of dimensions')
-    parser.add_argument('--decayEpoch', dest='decayEpoch', default=6, type=int,
-        help='specify the epoch to keep initial learning rate')
-    parser.add_argument('-e', '--epoch', dest='epoch', default=39, type=int,
-        help='specify the number of epoch')
+        help='the number of dimensions')
+    parser.add_argument('--decayEpoch', dest='decayEpoch', default=20, type=int,
+        help='the epoch to keep initial learning rate')
+    parser.add_argument('-e', '--epoch', dest='epoch', default=200, type=int,
+        help='the number of epoch')
     parser.add_argument('--input_dropout', dest='input_dropout', default=0.75, type=float,
-        help='specify the dropout rate for rnn input')
+        help='dropout rate for rnn input')
     parser.add_argument('--hidden_dropout', dest='hidden_dropout', default=0.25, type=float,
-        help='specify the dropout rate for previous hidden state (in time step)')
+        help='dropout rate for previous hidden state (in time step)')
     parser.add_argument('--embed_dropout', dest='embed_dropout', default=0.25, type=float,
-        help='specify the dropout rate for embedding')
+        help='dropout rate for embedding')
     parser.add_argument('--output_dropout', dest='output_dropout', default=0.75, type=float,
-        help='specify the dropout rate for output from rnn')
+        help='dropout rate for output from rnn')
     parser.add_argument('--decay', dest='decay', default=0.98039, type=float,
-        help='specify the value for epoch decay')
+        help='the value for epoch decay')
     parser.add_argument('-b', '--batch', dest='batch', default=20, type=int,
-        help='specify the size of batch')
+        help='batch size')
     parser.add_argument('-g', '--gpu', dest='gpu', default=-1, type=int,
         help='GPU ID (negative value indicates CPU)')
     parser.add_argument('--seed', dest='seed', default=0, type=int,
-        help='specify the number of seed')
+        help='seed value')
     parser.add_argument('--weight_decay', dest='weight_decay', default=1e-7, type=float,
         help='weight decay')
     parser.add_argument('--depth', dest='depth', default=8, type=int,
