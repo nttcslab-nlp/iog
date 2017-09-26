@@ -28,9 +28,21 @@ We note that it is impossible to run these codes on Python 3 or chainer 2.X.
 
 * Run `preparedata.sh` to obtain the preprocessed Penn Treebank dataset and construct .npz files.
 * Train the base language model
-    * E.g., to obtain [LSTM language model with dropout](https://arxiv.org/abs/1409.2329), run `python learnLSTMLM.py -g 0 --train data/ptb/ptb.train.npz --valid data/ptb/ptb.valid.npz -v data/ptb/ptb.train.vocab --valid_with_batch --output mediumLSTMLM`
+    * E.g., to obtain [LSTM language model with dropout](https://arxiv.org/abs/1409.2329), run
+
+```
+python learnLSTMLM.py -g 0 --train data/ptb/ptb.train.npz --valid data/ptb/ptb.valid.npz -v data/ptb/ptb.train.vocab
+   --valid_with_batch --output mediumLSTMLM
+```
+
 * Train Input-to-Output gate for the above base language model
-    * E.g., run `python learnIOG.py -g 0 --train data/ptb/ptb.train.npz --valid data/ptb/ptb.valid.npz -s mediumLSTMLM.setting -m mediumLSTMLM.epoch39_fin.bin --output iog4mediumLSTMLM` to train Input-to-Output gate for the lstm language model in the above example.
+    * E.g., run the following command to train Input-to-Output gate for the lstm language model in the above example.
+
+```
+python learnIOG.py -g 0 --train data/ptb/ptb.train.npz --valid data/ptb/ptb.valid.npz -s mediumLSTMLM.setting
+   -m mediumLSTMLM.epoch39_fin.bin --output iog4mediumLSTMLM
+```
+
 * Run `testLM.py` for computing perplexity of the base language model
     * E.g., run `python testLM.py -g 0 -t data/ptb/ptb.test.npz -s mediumLSTMLM.setting -m mediumLSTMLM.epoch39_fin.bin` for the lstm language model in the above example.
 * Run `testIOG.py` for computing perplexity of the base language model with Input-to-Output gate.
