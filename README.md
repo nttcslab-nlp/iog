@@ -1,7 +1,7 @@
 # Input-to-Output Gate for Language Models
 
 
-This repository contains the Input-to-Output gate proposed in [Input-to-Output Gate to Improve RNN Language Models](http:hogehoge) published in IJCNLP 2017.
+This repository contains the Input-to-Output gate proposed in [Input-to-Output Gate to Improve RNN Language Models](https://arxiv.org/abs/1709.08907) published in IJCNLP 2017.
 In addition, this repository also contains various RNN language models including [LSTM with dropout](https://arxiv.org/abs/1409.2329), [variational LSTM](https://arxiv.org/abs/1512.05287), and [Recurrent Highway Network](https://arxiv.org/abs/1607.03474) for the base RNN language models.
 
 
