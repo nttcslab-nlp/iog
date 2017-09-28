@@ -46,8 +46,8 @@ LSTM (medium) | 50M | 102.2 | 96.2
 **LSTM (medium) + IOG** | 70M | **99.2** | **93.8**
 Variational LSTM (medium) | 50M | 97.2 | 91.8
 **Variational LSTM (medium) + IOG** | 70M | **95.9** | **91.0**
-Variational Recurrent Highway Network + WT | 61M | 80.1 | 76.1
-**Variational Recurrent Highway Network + WT + IOG** | 81M | **76.9** | **73.9**
+Variational Recurrent Highway Network + WT | 43M | 80.1 | 76.1
+**Variational Recurrent Highway Network + WT + IOG** | 63M | **76.9** | **73.9**
 
 
 ## Software Requirements
