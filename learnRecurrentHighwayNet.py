@@ -103,7 +103,7 @@ def make_dropout_mask(current_words, input_dropout, embed_dropout, hidden_dropou
 
 def valid_with_batch(validData, lmWithRNN):
     batchsize = 50
-    prevHiddenList = [chainer.Variable(xp.zeros((batchsize, lmWithRNN.dim)).astype(np.float32), volatile='on') for _ in range(lmWithRNN.layerNum)]
+    prevHiddenList = [chainer.Variable(xp.zeros((batchsize, lmWithRNN.dim)).astype(np.float32)) for _ in range(lmWithRNN.layerNum)]
     loss = 0
     totalins = len(validData) - 1
     for current_words, next_words in make_batch(validData, batchsize, 1000000):
@@ -157,7 +157,8 @@ def train(lmWithRNN, args, trainData, validData):
             sys.stderr.write('\r Finished %s'%finishnum)
         sys.stderr.write('\n')
         epochEnd = time.time()
-        validloss, validperp = valid_with_batch(validData, lmWithRNN)
+        with chainer.no_backprop_mode(), chainer.using_config('train', False):
+            validloss, validperp = valid_with_batch(validData, lmWithRNN)
         sys.stdout.write('Train time is %s\tValid time is %s\n'%(epochEnd - epochStart, time.time() - epochEnd))
         sys.stdout.write('Epoch: %s\tTrain loss: %.6f\tValid loss: %.6f\tValid perplexity: %.6f\n'%(epoch, totalloss / finishnum, validloss, validperp))
         sys.stdout.flush()
@@ -173,7 +174,7 @@ def train(lmWithRNN, args, trainData, validData):
 def main(args):
     vocab = read_vocab(args.vocab)
     trainData = chainer.Variable(xp.array(np.load(args.train)['arr_0'], dtype=np.int32))
-    validData = chainer.Variable(xp.array(np.load(args.valid)['arr_0'], dtype=np.int32), volatile='on')
+    validData = chainer.Variable(xp.array(np.load(args.valid)['arr_0'], dtype=np.int32))
     lmWithRNN = RHN(args.dim, vocab, args.depth)
     lmWithRNN.make_network(args.scale)
     settingData = SettingData(lmWithRNN)

@@ -4,8 +4,6 @@
 #input: train and valid corpus (replaced to npz file by utils.py), vocab file
 #output: trained language model
 
-#use chainer version 1.24.0
-#This program cannot run on chainer v2
 
 
 import sys
@@ -55,15 +53,14 @@ class LSTMLM:
     def compute_forward(self, wordIndex, prevHidden, dropout=0.0):
         #input: input word indices (chainer Variable)
         #prev hidden: previous hidden state
-        train = dropout > 0.0
         embed = self.lmNet.Embed(wordIndex)
-        h = F.dropout(embed, ratio=dropout, train=train)
+        h = F.dropout(embed, ratio=dropout)
         for j in range(self.layerNum):
             lstm = self.lmNet.__getitem__('LSTM%s'%(j))
             if prevHidden is None:
                 lstm.reset_state()
             lstm(h)
-            h = F.dropout(lstm.h, ratio=dropout, train=train)
+            h = F.dropout(lstm.h, ratio=dropout)
         y = self.lmNet.Output(h)
         return y, h
 
@@ -154,10 +151,11 @@ def train(lmWithRNN, args, trainData, validData):
             sys.stderr.write('\r Finished %s'%finishnum)
         sys.stderr.write('\n')
         epochEnd = time.time()
-        if args.valid_with_batch:
-            validloss, validperp = valid_with_batch(validData, lmWithRNN)
-        else:
-            validloss, validperp = valid(validData, lmWithRNN)
+        with chainer.no_backprop_mode(), chainer.using_config('train', False):
+            if args.valid_with_batch:
+                validloss, validperp = valid_with_batch(validData, lmWithRNN)
+            else:
+                validloss, validperp = valid(validData, lmWithRNN)
         sys.stdout.write('Train time is %s\tValid time is %s\n'%(epochEnd - epochStart, time.time() - epochEnd))
         sys.stdout.write('Epoch: %s\tTrain loss: %.6f\tValid loss: %.6f\tValid perplexity: %.6f\n'%(epoch, totalloss / finishnum, validloss, validperp))
         sys.stdout.flush()
@@ -173,7 +171,7 @@ def train(lmWithRNN, args, trainData, validData):
 def main(args):
     vocab = read_vocab(args.vocab)
     trainData = chainer.Variable(xp.array(np.load(args.train)['arr_0'], dtype=np.int32))
-    validData = chainer.Variable(xp.array(np.load(args.valid)['arr_0'], dtype=np.int32), volatile='on')
+    validData = chainer.Variable(xp.array(np.load(args.valid)['arr_0'], dtype=np.int32))
     lmWithRNN = LSTMLM(args.dim, vocab, args.layerNum)
     lmWithRNN.make_network(args.scale)
     settingData = SettingData(lmWithRNN)

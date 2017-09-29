@@ -78,7 +78,7 @@ def valid_with_batch(validData, lmWithRNN, gateModel):
     totalins = len(validData) - 1
     loss = 0
     if lmWithRNN.modelType == 'RHN':
-        prevHidden = [chainer.Variable(xp.zeros((batchsize, lmWithRNN.dim)).astype(np.float32), volatile='on') for _ in range(lmWithRNN.layerNum)]
+        prevHidden = [chainer.Variable(xp.zeros((batchsize, lmWithRNN.dim)).astype(np.float32)) for _ in range(lmWithRNN.layerNum)]
     else:
         prevHidden = None
     for current_words, next_words in make_batch(validData, batchsize, 100000):
@@ -126,7 +126,8 @@ def train(lmWithRNN, gateModel, args, trainData, validData):
             sys.stderr.write('\r Finished %s'%finishnum)
         sys.stderr.write('\n')
         epochEnd = time.time()
-        validloss, validperp = valid_with_batch(validData, lmWithRNN, gateModel)
+        with chainer.no_backprop_mode(), chainer.using_config('train', False):
+            validloss, validperp = valid_with_batch(validData, lmWithRNN, gateModel)
         sys.stderr.write('Train time is %s\tValid time is %s\n'%(epochEnd - epochStart, time.time() - epochEnd))
         sys.stdout.write('Epoch: %s\tTrain loss: %.6f\tValid loss: %.6f\tValid perplexity: %.6f\n'%(epoch, totalloss / finishnum, validloss, validperp))
         sys.stdout.flush()
@@ -138,7 +139,7 @@ def train(lmWithRNN, gateModel, args, trainData, validData):
 
 def main(args):
     trainData = chainer.Variable(xp.array(np.load(args.train)['arr_0'], dtype=np.int32))
-    validData = chainer.Variable(xp.array(np.load(args.valid)['arr_0'], dtype=np.int32), volatile='on')
+    validData = chainer.Variable(xp.array(np.load(args.valid)['arr_0'], dtype=np.int32))
     lmModelData = pickle.load(open(args.setting))
     if 'RHN' in lmModelData.modelType:
         lmWithRNN = RHN(lmModelData.dim, lmModelData.vocab, lmModelData.depth)

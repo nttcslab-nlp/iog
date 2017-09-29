@@ -46,7 +46,7 @@ def valid_with_cachemodel(validData, lmWithRNN, gateModel, cachesize, prev):
         if i != 0:
             z = xp.zeros((min(cachesize, i), len(lmWithRNN.vocab)), dtype=np.float32)
             z[xp.arange(min(cachesize, i)), validData.data[max(1, i - cachesize + 1) : i+1]] = 1
-            one_hot = chainer.Variable(z, volatile='on')
+            one_hot = chainer.Variable(z)
         y, prev = lmWithRNN.compute_forward(validData[i : i+1], prev)
         if type(prev) is list:
             h = prev[-1]
@@ -89,9 +89,9 @@ def main(args):
     if args.gpu >= 0:
         lmWithRNN.lmNet.to_gpu()
         gateModel.gateModel.to_gpu()
-    testData = chainer.Variable(xp.array(np.load(args.test)['arr_0'], dtype=np.int32), volatile='on')
+    testData = chainer.Variable(xp.array(np.load(args.test)['arr_0'], dtype=np.int32))
     if 'RHN' in lmModelData.modelType:
-        prev = [chainer.Variable(xp.zeros((1, lmModelData.dim)).astype(np.float32), volatile='on') for _ in range(lmModelData.layerNum)]
+        prev = [chainer.Variable(xp.zeros((1, lmModelData.dim)).astype(np.float32)) for _ in range(lmModelData.layerNum)]
     else:
         prev = None
     if args.cachesize > 0:
@@ -117,7 +117,9 @@ if __name__ == '__main__':
     if args.gpu >= 0:
         cuda.check_cuda_available()
         cuda.get_device(args.gpu).use()
-    xp = cuda.cupy if args.gpu >= 0 else np
+    with chainer.no_backprop_mode(), chainer.using_config('train', False):
+        xp = cuda.cupy if args.gpu >= 0 else np
+
     main(args)
 
 

@@ -44,7 +44,7 @@ def valid_with_cachemodel(validData, lmWithRNN, cachesize, prev=None):
         if i != 0:
             z = xp.zeros((min(cachesize, i), len(lmWithRNN.vocab)), dtype=np.float32)
             z[xp.arange(min(cachesize, i)), validData.data[max(1, i - cachesize + 1) : i+1]] = 1
-            one_hot = chainer.Variable(z, volatile='on')
+            one_hot = chainer.Variable(z)
         y, prev = lmWithRNN.compute_forward(validData[i : i+1], prev)
         if type(prev) is list:
             h = prev[-1]
@@ -53,7 +53,7 @@ def valid_with_cachemodel(validData, lmWithRNN, cachesize, prev=None):
         if i != 0:
             c = F.vstack(cache)
             cdot = theta * F.sum(c * F.broadcast_to(h, c.shape), axis=1, keepdims=True)
-            cdot_lim = F.minimum(chainer.Variable(xp.full(cdot.shape, max_float32_log).astype(np.float32), volatile='on'), cdot)
+            cdot_lim = F.minimum(chainer.Variable(xp.full(cdot.shape, max_float32_log).astype(np.float32)), cdot)
             cdot_exp = F.exp(cdot_lim)
             cdotm = F.broadcast_to(cdot_exp, one_hot.shape)
             cdotsum = F.sum(cdotm * one_hot, axis=0, keepdims=True)
@@ -83,9 +83,9 @@ def main(args):
     S.load_npz(args.model, lmWithRNN.lmNet)
     if args.gpu >= 0:
         lmWithRNN.lmNet.to_gpu()
-    testData = chainer.Variable(xp.array(np.load(args.test)['arr_0'], dtype=np.int32), volatile='on')
+    testData = chainer.Variable(xp.array(np.load(args.test)['arr_0'], dtype=np.int32))
     if 'RHN' in modelData.modelType:
-        prev = [chainer.Variable(xp.zeros((1, modelData.dim)).astype(np.float32), volatile='on') for _ in range(modelData.layerNum)]
+        prev = [chainer.Variable(xp.zeros((1, modelData.dim)).astype(np.float32)) for _ in range(modelData.layerNum)]
     else:
         prev = None
     if args.cachesize > 0:
@@ -112,6 +112,7 @@ if __name__ == '__main__':
         cuda.check_cuda_available()
         cuda.get_device(args.gpu).use()
     xp = cuda.cupy if args.gpu >= 0 else np
-    main(args)
+    with chainer.no_backprop_mode(), chainer.using_config('train', False):
+        main(args)
 
 
