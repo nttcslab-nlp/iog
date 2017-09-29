@@ -13,6 +13,6 @@ wget --quiet --continue https://raw.githubusercontent.com/wojzaremba/lstm/master
 echo 'Making .npz file and vocabulary for Penn Treebank dataset'
 
 cd ..
-python ../utils.py -i ptb -o ptb -p ptb > ptb/ptb.train.vocab
+python utils.py -i ptb -o ptb -p ptb > ptb/ptb.train.vocab
 
 
