@@ -4,7 +4,6 @@
 #input: test corpus (replaced to npz file by utils.py), setting file, and model file
 #output: loss value and perplexity
 
-#use chainer version 1.24.0
 
 import sys
 from six.moves import cPickle as pickle

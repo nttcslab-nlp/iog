@@ -4,7 +4,6 @@
 #input: train and valid corpus (replaced to npz file by utils.py)
 #output: trained language model
 
-#use chainer version 1.24.0
 
 import sys
 from six.moves import cPickle as pickle

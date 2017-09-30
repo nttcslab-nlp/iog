@@ -53,9 +53,9 @@ Variational Recurrent Highway Network + WT | 43M | 80.1 | 76.1
 ## Software Requirements
 
 * Python 2
-* Chainer 1.X (recommend version 1.24)
+* Chainer
 
-We note that it is impossible to run these codes on Python 3 or chainer 2.X.
+We note that it is impossible to run these codes on Python 3.
 
 
 ## How to use
@@ -68,8 +68,6 @@ We note that it is impossible to run these codes on Python 3 or chainer 2.X.
 python learnLSTMLM.py -g 0 --train data/ptb/ptb.train.npz --valid data/ptb/ptb.valid.npz -v data/ptb/ptb.train.vocab
    --valid_with_batch --output mediumLSTMLM
 ```
-
-    * The validation score will be about 88.0.
 
 * Train Input-to-Output gate for the above base language model
     * E.g., run the following command to train Input-to-Output gate for the lstm language model in the above example.

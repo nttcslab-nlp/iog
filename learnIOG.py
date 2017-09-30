@@ -4,7 +4,6 @@
 #input: learned language model (this program did not train the language model), train corpus, and validation corpus
 #output: trained input-to-output gate
 
-#use chainer version 1.24.0
 
 import sys
 from six.moves import cPickle as pickle
@@ -55,9 +54,8 @@ class GateModel:
 
 
     def compute_gate(self, input_word, dropout=0.0):
-        train = dropout > 0.0
         embed = self.gateModel.Embed(input_word)
-        out = self.gateModel.Weight(F.dropout(embed, ratio=dropout, train=train))
+        out = self.gateModel.Weight(F.dropout(embed, ratio=dropout))
         gate = F.sigmoid(out)
         return gate
 

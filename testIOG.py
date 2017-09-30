@@ -4,7 +4,6 @@
 #input: test corpus (replaced to npz file by utils.py), IOG setting file, and IOG model file
 #output: loss value and perplexity
 
-#use chainer version 1.24.0
 
 import sys
 from six.moves import cPickle as pickle
@@ -117,9 +116,8 @@ if __name__ == '__main__':
     if args.gpu >= 0:
         cuda.check_cuda_available()
         cuda.get_device(args.gpu).use()
+    xp = cuda.cupy if args.gpu >= 0 else np
     with chainer.no_backprop_mode(), chainer.using_config('train', False):
-        xp = cuda.cupy if args.gpu >= 0 else np
-
-    main(args)
+        main(args)
 
 
