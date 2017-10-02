@@ -203,6 +203,7 @@ if __name__ == '__main__':
 default setting is the medium setting.
 
 the large setting is:
+--seed 2 \\
 --scale 0.04 \\
 --maxGrad 10 \\
 -d 1500 \\

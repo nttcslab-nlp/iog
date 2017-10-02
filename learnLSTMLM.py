@@ -46,7 +46,7 @@ class LSTMLM:
         self.lmNet = chainer.Chain()
         self.lmNet.add_link('Embed', L.EmbedID(len(self.vocab), dim, initialW=I.Uniform(scale)))
         for j in range(self.layerNum):
-            self.lmNet.add_link('LSTM%s'%(j), L.LSTM(dim, dim, lateral_init=I.Uniform(scale), upward_init=I.Uniform(scale)))
+            self.lmNet.add_link('LSTM%s'%(j), L.LSTM(dim, dim, lateral_init=I.Uniform(scale), upward_init=I.Uniform(scale), forget_bias_init=0))
         self.lmNet.add_link('Output', L.Linear(dim, len(self.vocab), initialW=I.Uniform(scale)))
 
 
