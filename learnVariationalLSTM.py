@@ -208,7 +208,7 @@ the large setting is:
 -d 1500 \\
 --decayEpoch 14 \\
 -e 55 \\
---decay 0..87 \\ 
+--decay 0.87 \\ 
 --embed_dropout 0.3 \\
 --input_dropout 0.5 \\
 --hidden_dropout 0.3 \\
